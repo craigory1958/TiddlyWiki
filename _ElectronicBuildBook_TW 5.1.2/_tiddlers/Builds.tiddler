@@ -1,0 +1,25 @@
+<div title="${title}" 
+    tags="build" 
+    created="${created}" 
+    modified="${modified}" 
+    caption="${caption}" 
+    desc="${desc}" 
+    sort="${sort}" 
+    affinity="${affinity}" 
+    build="${build}" 
+    build-name="${build-name}" 
+    file-name="${file-name}" 
+    kit="${kit-key}" 
+    kit-number="${kit-number}" 
+    manufacturer="${manufacturer}"
+    scale="${scale}" 
+>
+<pre>
+&lt;$macrocall $name=&quot;BuildTemplateHeader&quot; /&gt;
+
+&lt;!--Merged-Content--&gt;
+&lt;!--/Merged-Content--&gt;
+
+&lt;$macrocall $name=&quot;BuildTemplateFooter&quot; /&gt;
+</pre>
+</div>

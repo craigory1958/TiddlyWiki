@@ -1,0 +1,14 @@
+<div title="${title}" 
+    tags="image" 
+    created="${created}" 
+    modified="${modified}" 
+    caption="${caption}" 
+    desc="${desc}" 
+    sort="${sort}" 
+    build="${build}" 
+    file-path="${file-path}" 
+    sequence="${sequence}" 
+    step="${step}" 
+>
+<pre></pre>
+</div>

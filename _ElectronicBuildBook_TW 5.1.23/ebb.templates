@@ -1,0 +1,388 @@
+\define CommentBlock()
+
+<!-- 
+
+    2026-09-09 001 CJG  - Update/simplify task filter in StepTemplateFooter().
+                          Does not require the use of the Task:Tasks regex field.
+                          
+    2026-09-23 001 CJG  - Change pre-req tasks to regex so that sub-assemblies can have pre-reqs.
+    
+    2026-10-07 001 CJG  - Change pre-reqs into comma delimited list.
+           
+-->
+
+\end
+
+
+\define BuildTemplateHeader()
+ 
+    ---
+    !!{{!!caption}}
+
+\end
+
+
+\define BuildTemplateFooter()
+
+    ---
+    !!!''Box Contents:''
+
+    <$list filter="[tag[image]field:build{!!build}!has[step]] +[sort[sort]]" >
+        <$macrocall $name="ImagePopup" build={{!!build}}  file-path={{!!file-path}}  />
+    </$list>
+
+    ---
+    !!!''Paint Callout:''
+
+    <$list filter="[tag[task]field:build{!!build}has[color-index]each[color-index]] +[sort[color-index]]" >
+        <$macrocall $name="Color" />
+        <br/>
+    </$list>
+
+    ---
+    !!!''Step Callout:''
+
+    <$list filter="[tag[step]field:build{!!build}] +[nsort[step]]" >
+        <$checkbox tag="done" />
+        <$link>Step {{!!step}})</$link> &nbsp; {{!!desc}}
+        <br/>
+    </$list>
+ 
+\end
+
+
+\define StepTemplateHeader()
+ 
+    <div style="float: left;" class="no-print" >
+        <$list filter="[field:build{!!build}tag[step]step{!!prev-step}]" >
+            <$link><< prev</$link>
+        </$list>
+    </div>
+
+    <div style="float: right;" class="no-print" >
+        <$list filter="[field:build{!!build}tag[step]step{!!next-step}]" >
+            <$link>next >></$link>
+        </$list>
+     </div>
+
+    <div style="clear: both;" />
+
+    ---
+
+    <$list filter="[all[current]field:step[1]]" >
+
+        {{$:/ebb:TaskType:PrepareBuild.description}}
+
+    </$list>
+
+
+    !!Step {{!!step}}) {{!!desc}}
+  
+    <$macrocall $name="TaskType" task-type="{{!!task-type}}" task-type-format="description" />
+
+\end
+
+
+\define StepTemplateFooter()
+
+    <div style="clear: both;" />
+
+    <$list filter="[tag[image]field:build{!!build}field:step{!!step}] +[sort[sequence]]" >
+        <$macrocall $name="ImagePopup" build={{!!build}}  file-path={{!!file-path}}  />
+    </$list>
+
+  
+    <$list filter="[tag[task]field:build{!!build}field:step{!!step}has[part-callout]last[]]" >
+
+        ---
+    </$list>
+ 
+    !!!<$macrocall $name="TaskType" task-type="{{!!task-type}}"  task-type-format="summary" />
+
+    <$set name="step" value={{!!step}} >
+
+        <$list filter="[tag[build]field:build{!!build}]" >
+            <$set name="kit" value={{!!kit}} >
+
+                <$list filter="[tag[step]field:build{!!build}field:step<step>]" >
+
+                    <$list filter="[tag[task]field:build{!!build}field:step{!!step}has[task-type]] +[sort[title]]" >
+                        <$macrocall $name="TaskTemplate" />
+                    </$list>
+                </$list>
+            </$set>
+        </$list>
+    </$set>
+
+    <$list filter="[tag[task]field:build{!!build}field:step{!!step}has[color-index]first[]]" >
+
+    ---
+    !!!Paint Callout:
+
+        <$list filter="[tag[task]field:build{!!build}field:step{!!step}has[color-index]each[color-index]] +[sort[color-index]]" >
+            <$macrocall $name="Color" />
+            <br/>
+        </$list>
+    </$list>
+
+    ---
+    !!!Tool(s)
+    <ul>
+        <$list filter="[tag[tool]regexp:tool{!!tools}] +[sort[caption]]" ><li>{{!!caption}}</li></$list>
+    </ul>
+
+    <div style="float: left;" class="no-print" >
+        <$list filter="[field:build{!!build}tag[step]step{!!prev-step}]" >
+            <$link><< prev</$link>
+        </$list>
+    </div>
+
+    <div style="float: right;" class="no-print" >
+        <$list filter="[field:build{!!build}tag[step]step{!!next-step}]" >
+            <$link>next >></$link>
+        </$list>
+    </div>
+
+\end
+
+
+\define TaskPreRequisite()
+
+    &nbsp; `Pre-Req Task(s) [`
+    <$list filter="[tag[task]field:build{!!build}regexp:task{!!prereq-task}!tag[done]butlast[]] +[sort[title]]">{{!!task}}, </$list> 
+    <$list filter="[tag[task]field:build{!!build}regexp:task{!!prereq-task}!tag[done]last[]] +[sort[title]]">{{!!task}}</$list> 
+    `]`
+
+\end
+
+
+\define TaskTemplate()
+
+    <$checkbox tag="done" >
+        Task {{!!task}}) &nbsp; {{!!part-callout}}
+
+        <$list filter="[tag[part]field:part-callout{!!part-callout}field:kit<kit>]" > - {{!!desc}}</$list>
+
+        ''//{{!!desc}}//''<$list filter="[tag[task]field:build{!!build}field:task{!!task}has[prereq-task]]" ><$macrocall $name="TaskPreRequisite" /></$list> 
+    </$checkbox>
+    <br/>
+
+\end
+
+
+
+\define TaskType(task-type, task-type-format)
+
+    <$macrocall $name=$task-type$ format=$task-type-format$   />
+
+\end
+
+
+
+\define Airbrush(format)
+
+    <$reveal state="$:/ebb:TaskType.format.description" text="$format$" type="match" >
+
+        {{$:/ebb:TaskType:Airbrush.description}}
+
+    </$reveal>
+
+    <$reveal state="$:/ebb:TaskType.format.summary" text="$format$" type="match" >
+        Airbrush part(s) using //<$macrocall $name="Colors"  />//
+    </$reveal>
+  
+\end
+
+
+\define ApplyDecal(format)
+
+    <$reveal state="$:/ebb:TaskType.format.description" text="$format$" type="match" >
+
+        {{$:/ebb:TaskType:ApplyDecal.description}}
+
+    </$reveal>
+
+    <$reveal state="$:/ebb:TaskType.format.summary" text="$format$" type="match" >
+        Apply decal(s)
+    </$reveal>
+  
+\end
+
+
+\define ApplyPrimer(format)
+
+    <$reveal state="$:/ebb:TaskType.format.description" text="$format$" type="match" >
+
+        {{$:/ebb:TaskType:ApplyDecal.description}}
+
+    </$reveal>
+
+    <$reveal state="$:/ebb:TaskType.format.summary" text="$format$" type="match" >
+        Prime part(s) using //<$macrocall $name="Colors" />//
+    </$reveal>
+  
+\end
+
+
+\define Assemble(format)  
+
+    <$reveal state="$:/ebb:TaskType.format.description" text="$format$" type="match" >
+
+        {{$:/ebb:TaskType:Assemble.description}}
+
+    </$reveal>
+
+    <$reveal state="$:/ebb:TaskType.format.summary" text="$format$" type="match" >
+        Assemble part(s)
+    </$reveal>
+  
+\end
+
+
+\define Handbrush(format)
+
+    <$reveal state="$:/ebb:TaskType.format.description" text="$format$" type="match" >
+
+        {{$:/ebb:TaskType:Handrbrush.description}}
+
+    </$reveal>
+
+    <$reveal state="$:/ebb:TaskType.format.summary" text="$format$" type="match" >
+        Hand brush part(s) using //<$macrocall $name="Colors" />//
+    </$reveal>
+  
+\end
+
+
+\define Highlight(format)
+
+    <$reveal state="$:/ebb:TaskType.format.description" text="$format$" type="match" >
+
+        {{$:/ebb:TaskType:Highlight.description}}
+
+    </$reveal>
+
+    <$reveal state="$:/ebb:TaskType.format.summary" text="$format$" type="match" >
+        Highlight part(s)
+    </$reveal>
+ 
+\end
+
+
+\define MaskPart(format)
+
+    <$reveal state="$:/ebb:TaskType.format.description" text="$format$" type="match" >
+        {{$:/ebb:TaskType:MaskPart.description}}
+    </$reveal>
+
+    <$reveal state="$:/ebb:TaskType.format.summary" text="$format$" type="match" >
+        Mask part(s)
+    </$reveal>
+ 
+\end
+
+
+\define PreparePart(format)
+
+    <$reveal state="$:/ebb:TaskType.format.description" text="$format$" type="match" >
+
+        {{$:/ebb:TaskType:PreparePart.description}}
+
+    </$reveal>
+
+    <$reveal state="$:/ebb:TaskType.format.summary" text="$format$" type="match" >
+        Prepare part(s) prior to painting and/or assembly
+    </$reveal>
+  
+\end
+
+
+\define RepairSeam(format)
+
+    <$reveal state="$:/ebb:TaskType.format.description" text="$format$" type="match" >
+
+        {{$:/ebb:TaskType:RepairSeam.description}}
+
+    </$reveal>
+
+    <$reveal state="$:/ebb:TaskType.format.summary" text="$format$" type="match" >
+        Repair seam(s)
+    </$reveal>
+ 
+\end
+
+
+\define ScratchBuild(format)
+
+    <$reveal state="$:/ebb:TaskType.format.description" text="$format$" type="match" >
+        {{$:/ebb:TaskType:ScratchBuild.description}}
+    </$reveal>
+
+    <$reveal state="$:/ebb:TaskType.format.summary" text="$format$" type="match" >
+        Scratch build part(s)
+    </$reveal>
+  
+\end
+
+
+\define TestFitAndAssemble(format)  
+
+    <$reveal state="$:/ebb:TaskType.format.description" text="$format$" type="match" >
+
+        {{$:/ebb:TaskType:TestFitAndAssemble.description}}
+
+    </$reveal>
+
+    <$reveal state="$:/ebb:TaskType.format.summary" text="$format$" type="match" >
+        Test fit, trim and assemble part(s)
+    </$reveal>
+  
+\end
+
+
+\define TestFit(format)
+
+    <$reveal state="$:/ebb:TaskType.format.description" text="$format$" type="match" >
+
+        {{$:/ebb:TaskType:TestFit.description}}
+
+    </$reveal>
+
+    <$reveal state="$:/ebb:TaskType.format.summary" text="$format$" type="match" >
+        Test fit and correct part(s) prior to assembly
+    </$reveal>
+  
+\end
+
+
+
+\define ImagePopup(build, file-path)
+
+    <$button popup="$:/ebb:state:$build$.$file-path$" class="tc-btn-invisible tc-tiddlylink"><$image height="50" source={{!!file-path}} /></$button>
+
+    <$reveal type="popup" state="$:/ebb:state:$build$.$file-path$" >
+        <$image width="825" source={{!!file-path}} /> 
+    </$reveal>
+
+\end
+
+
+\define Colors()
+
+    <$list filter="[tag[task]field:build{!!build}field:step{!!step}has[color-index]each[color-index]] +[sort[color-index]]" >
+        <$macrocall $name="Color" />
+    </$list>
+
+\end
+
+
+\define Color()
+
+    <$list filter="[tag[color]color-index{!!color-index}]" >
+        {{!!brand}} #{{!!color-number}} ({{!!caption}})
+        <$list filter="[tag[color]color-index{!!color-index}has[fs]]" > 
+            {{!!fs}}
+        </$list>
+    </$list>
+
+\end

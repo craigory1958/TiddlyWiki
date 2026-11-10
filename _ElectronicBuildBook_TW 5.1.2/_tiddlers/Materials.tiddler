@@ -1,0 +1,11 @@
+<div title="${title}" 
+    tags="material" 
+    created="${created}" 
+    modified="${modified}" 
+    caption="${caption}" 
+    desc="${desc}" 
+    sort="${sort}" 
+    material="${material-id}"
+>
+<pre></pre>
+</div>

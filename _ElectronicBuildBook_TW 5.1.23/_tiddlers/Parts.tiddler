@@ -1,0 +1,12 @@
+<div title="${title}" 
+    tags="part" 
+    created="${created}" 
+    modified="${modified}" 
+    caption="${caption}" 
+    desc="${desc}" 
+    sort="${sort}" 
+    kit="${kit-key}" 
+    part-callout="${part-callout}"
+>
+<pre></pre>
+</div>

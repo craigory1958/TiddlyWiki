@@ -1,0 +1,17 @@
+<div title="${title}" 
+    tags="task" 
+    created="${created}" 
+    modified="${modified}" 
+    caption="${caption}" 
+    desc="${desc}" 
+    sort="${sort}" 
+    build="${build}" 
+    color-index="${color-id}" 
+    part-callout="${part-callout}" 
+    prereq-task="${prereq-task-regex}" 
+    step="${step}" 
+    task="${task}" 
+    task-type="${task-type}" 
+>
+<pre></pre>
+</div>

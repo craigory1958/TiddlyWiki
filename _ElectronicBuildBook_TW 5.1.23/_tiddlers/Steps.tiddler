@@ -1,0 +1,23 @@
+<div title="${title}" 
+    tags="step" 
+    created="${created}" 
+    modified="${modified}" 
+    caption="${caption}" 
+    desc="${desc}" 
+    sort="${sort}" 
+    build="${build}" 
+    next-step="${next-step}" 
+    prev-step="${prev-step}" 
+    step="${step}" 
+    task-type="${task-type}" 
+    tools="${tools-regex}" 
+>
+<pre>
+&lt;$macrocall $name=&quot;StepTemplateHeader&quot; /&gt;
+
+&lt;!--Merged-Content--&gt;
+&lt;!--/Merged-Content--&gt;
+
+&lt;$macrocall $name=&quot;StepTemplateFooter&quot; /&gt;
+</pre>
+</div>

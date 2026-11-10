@@ -1,0 +1,15 @@
+<div title="${title}" 
+    tags="color" 
+    created="${created}" 
+    modified="${modified}" 
+    caption="${caption}" 
+    desc="${desc}" 
+    sort="${sort}" 
+    brand="${brand}" 
+    color-index="${color-id}" 
+    color-number="${color-number}" 
+    federal-standard="${federal-standard}" 
+    paint-type="${paint-type}"
+>
+<pre></pre>
+</div>
